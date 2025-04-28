@@ -1,0 +1,27 @@
+services:
+  postgres_liga_sudoers:
+    image: postgres:latest
+    container_name: postgres_liga_sudoers_sql
+    environment:
+      POSTGRES_USER: sudoers
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: liga_sudoers
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata_liga_sudoers:/var/lib/postgresql/data
+      - ./ddl/liga_sudoers.sql:/docker-entrypoint-initdb.d/liga_sudoers.sql
+      - ./backup:/var/lib/postgresql/backup
+
+  postgres_liga_sudoers_replica:
+    image: postgres:latest
+    container_name: postgres_liga_sudoers_replica
+    ports:
+      - "5435:5432"
+    entrypoint: [ "bash", "-c", "sleep infinity" ]
+    volumes:
+      - pgdata_liga_sudoers_replica:/var/lib/postgresql/data
+
+volumes:
+  pgdata_liga_sudoers:
+  pgdata_liga_sudoers_replica:
