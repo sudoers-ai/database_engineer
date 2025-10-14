@@ -123,11 +123,11 @@ CHECKPOINT;
 
 /usr/lib/postgresql/17/bin/pg_waldump backup/000000010000000000000002 | head
 
-/usr/lib/postgresql/17/bin/pg_ctl -D /var/lib/postgresql/data stop
+#/usr/lib/postgresql/17/bin/pg_ctl -D /var/lib/postgresql/data stop
 ```
 
 ## Criar a replicação
-Abra um segundo terminal
+Abra um segundo terminal (Terminal 2)
 ```bash
 docker exec -it postgres_liga_sudoers_replica bash
 su - postgres
@@ -207,7 +207,7 @@ Ligue o PostgreSQL no Terminal 02 e veja os registros foram enviados para replic
 /usr/lib/postgresql/17/bin/pg_ctl -D /var/lib/postgresql/data start
 ```
 
-## Promovendo a replica
+## Promovendo a replica (Terminal 2)
 ```bash
 SELECT timeline_id FROM pg_control_checkpoint();
 \q

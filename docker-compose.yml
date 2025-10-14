@@ -1,6 +1,6 @@
 services:
   postgres_liga_sudoers:
-    image: postgres:latest
+    image: postgres:17
     container_name: postgres_liga_sudoers_sql
     environment:
       POSTGRES_USER: sudoers
@@ -14,7 +14,7 @@ services:
       - ./backup:/var/lib/postgresql/backup
 
   postgres_liga_sudoers_replica:
-    image: postgres:latest
+    image: postgres:17
     container_name: postgres_liga_sudoers_replica
     ports:
       - "5435:5432"
