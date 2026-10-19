@@ -1,0 +1,5 @@
+# Sempre LF: scripts .sh e arquivos .sql rodam dentro de containers Linux,
+# mesmo quando o repositorio e clonado no Windows.
+* text=auto eol=lf
+*.png binary
+*.jar binary

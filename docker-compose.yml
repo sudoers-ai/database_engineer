@@ -1,27 +1,140 @@
-services:
-  postgres_liga_sudoers:
-    image: postgres:17
-    container_name: postgres_liga_sudoers_sql
-    environment:
-      POSTGRES_USER: sudoers
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: liga_sudoers
-    ports:
-      - "5434:5432"
-    volumes:
-      - pgdata_liga_sudoers:/var/lib/postgresql/data
-      - ./ddl/liga_sudoers.sql:/docker-entrypoint-initdb.d/liga_sudoers.sql
-      - ./backup:/var/lib/postgresql/backup
+# ==========================================================================
+# Liga Sudoers - Database Engineering
+#
+#   primario     PostgreSQL 17 - o banco de PRODUCAO da Liga Sudoers.
+#                Ja nasce com 18 meses de pedidos.
+#   replica1     PostgreSQL 17 - nasce VAZIO. Vira replica na etapa 5.
+#   replica2     PostgreSQL 17 - nasce VAZIO. Vira replica na etapa 5.
+#   restauracao  PostgreSQL 17 - nasce VAZIO. Recebe os backups nas etapas 3 e 4.
+#   logico       PostgreSQL 18 - um servidor NOVO, de versao mais nova.
+#                Recebe a replicacao LOGICA na etapa 8.
+#
+# Todos os nos enxergam o volume `backups` em /backup: e o "storage de
+# backup" da empresa (dumps, backups fisicos e o arquivo de WAL).
+#
+# Este repositorio e AUTOCONTIDO: nao depende de nenhum outro repo no ar.
+# As portas foram escolhidas para nao colidir com os outros repositorios
+# da Jornada e sao publicadas so em 127.0.0.1: os bancos usam senha de
+# laboratorio e nao devem ficar visiveis para a rede.
+# ==========================================================================
+name: database_engineer
 
-  postgres_liga_sudoers_replica:
-    image: postgres:17
-    container_name: postgres_liga_sudoers_replica
+x-no-17: &no-17
+  image: postgres:17
+  entrypoint: ["bash", "/repo/infra/entrypoint.sh"]
+  command: ["postgres"]
+  stop_grace_period: 30s
+  networks: [dbe_net]
+
+x-ambiente: &ambiente
+  TZ: America/Sao_Paulo
+  PGTZ: America/Sao_Paulo
+  # sem paginador no psql: um resultado longo no meio de um bloco colado
+  # abriria o "less", que engoliria os comandos seguintes
+  PSQL_PAGER: cat
+  POSTGRES_USER: sudoers
+  POSTGRES_PASSWORD: password
+  POSTGRES_DB: liga_sudoers
+
+services:
+
+#### PRODUCAO. Nasce com o banco liga_sudoers carregado.
+  primario:
+    <<: *no-17
+    container_name: dbe_primario
+    hostname: primario
+    environment:
+      <<: *ambiente
+      # checksums de pagina: detectam corrupcao no disco e permitem o pg_rewind
+      POSTGRES_INITDB_ARGS: "--data-checksums"
     ports:
-      - "5435:5432"
-    entrypoint: [ "bash", "-c", "sleep infinity" ]
+      - "127.0.0.1:${PORTA_PRIMARIO:-5460}:5432"
     volumes:
-      - pgdata_liga_sudoers_replica:/var/lib/postgresql/data
+      - pg_primario:/var/lib/postgresql/data
+      - backups:/backup
+      - ./infra/init:/docker-entrypoint-initdb.d:ro
+      - ./:/repo:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U sudoers -d liga_sudoers"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+
+#### Nascem VAZIOS e ficam esperando dados (veja infra/entrypoint.sh).
+  replica1:
+    <<: *no-17
+    container_name: dbe_replica1
+    hostname: replica1
+    environment:
+      <<: *ambiente
+      ESPERAR_DADOS: "1"
+    ports:
+      - "127.0.0.1:${PORTA_REPLICA1:-5461}:5432"
+    volumes:
+      - pg_replica1:/var/lib/postgresql/data
+      - backups:/backup
+      - ./:/repo:ro
+
+  replica2:
+    <<: *no-17
+    container_name: dbe_replica2
+    hostname: replica2
+    environment:
+      <<: *ambiente
+      ESPERAR_DADOS: "1"
+    ports:
+      - "127.0.0.1:${PORTA_REPLICA2:-5462}:5432"
+    volumes:
+      - pg_replica2:/var/lib/postgresql/data
+      - backups:/backup
+      - ./:/repo:ro
+
+  restauracao:
+    <<: *no-17
+    container_name: dbe_restauracao
+    hostname: restauracao
+    environment:
+      <<: *ambiente
+      ESPERAR_DADOS: "1"
+    ports:
+      - "127.0.0.1:${PORTA_RESTAURACAO:-5463}:5432"
+    volumes:
+      - pg_restauracao:/var/lib/postgresql/data
+      - backups:/backup
+      - ./:/repo:ro
+
+#### Versao NOVA do PostgreSQL. Nasce com o banco liga_sudoers VAZIO.
+  logico:
+    image: postgres:18
+    container_name: dbe_logico
+    hostname: logico
+    entrypoint: ["bash", "/repo/infra/entrypoint.sh"]
+    command: ["postgres"]
+    stop_grace_period: 30s
+    environment:
+      <<: *ambiente
+    ports:
+      - "127.0.0.1:${PORTA_LOGICO:-5464}:5432"
+    volumes:
+      # a partir do 18, a imagem oficial guarda os dados em /var/lib/postgresql/18/docker
+      - pg_logico:/var/lib/postgresql
+      - backups:/backup
+      - ./:/repo:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U sudoers -d liga_sudoers"]
+      interval: 5s
+      timeout: 5s
+      retries: 60
+    networks: [dbe_net]
+
+networks:
+  dbe_net:
+    name: database_engineer_net
 
 volumes:
-  pgdata_liga_sudoers:
-  pgdata_liga_sudoers_replica:
+  pg_primario:
+  pg_replica1:
+  pg_replica2:
+  pg_restauracao:
+  pg_logico:
+  backups:
