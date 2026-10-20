@@ -1,8 +1,7 @@
 -- ==========================================================================
 -- Liga Sudoers - banco TRANSACIONAL (OLTP)
 --
--- As 6 tabelas em 3a forma normal que a Liga Sudoers usa ha anos (as mesmas
--- do repo liga_sudoers e do jornada_dados_modelagem).
+-- As 6 tabelas em 3a forma normal que a Liga Sudoers usa ha anos.
 --
 -- Este arquivo roda SOZINHO na primeira vez que o no `primario` sobe.
 -- VOCE NAO EDITA ESTE ARQUIVO. Nesta disciplina voce nao muda o modelo:

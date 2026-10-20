@@ -1,9 +1,7 @@
 -- ==========================================================================
 -- Liga Sudoers - cadastro base (categorias, produtos e pessoas)
 --
--- COPIA de jornada_dados_modelagem (gerado com semente=42). Nao edite a mao.
--- Sao os mesmos ids dos outros repositorios da Jornada:
--- a pessoa 1 daqui e a pessoa 1 do jornada_dados e do jornada_dados_nosql.
+-- Gerado com semente=42 (sempre os mesmos dados). Nao edite a mao.
 --
 -- Os PEDIDOS nao estao aqui: eles sao gerados por 03_historico.sql.
 -- ==========================================================================

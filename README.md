@@ -1,20 +1,10 @@
 # 🐘 Liga Sudoers — Database Engineering
 
-![Desafio Engenheiro de Dados](Desafio%20-%20Jornada%20Engenharia%20de%20Dados.png "Desafio Engenheiro de Dados")
+> Você só precisa de Docker: tudo roda em containers na sua máquina.
 
-> Módulo da **Jornada Engenharia de Dados**. Nas outras partes você move o
-> dado ([`jornada_dados`](https://github.com/sudoers-ai/jornada_dados)),
-> escolhe onde ele mora ([`jornada_dados_nosql`](https://github.com/sudoers-ai/jornada_dados_nosql))
-> e dá forma a ele ([`jornada_dados_modelagem`](https://github.com/sudoers-ai/jornada_dados_modelagem)).
-> Aqui você garante que ele **não se perde**.
->
-> Este repositório é **autocontido**: não depende de nenhum outro para ser
-> concluído. Você só precisa de Docker.
-
-Bem-vindo ao Mapa do Engenheiro de Dados, módulo **Database Engineering**.
-Este é um laboratório 100% prático: você recebe o banco de produção da Liga
-Sudoers, com 18 meses de vendas, rodando num único servidor, sem backup e sem
-réplica. Se o disco morrer hoje, a empresa acaba.
+Bem-vindo ao **Database Engineering**. Este é um laboratório 100% prático:
+você recebe o banco de produção da Liga Sudoers, com 18 meses de vendas,
+rodando num único servidor, sem backup e sem réplica. Se o disco morrer hoje, a empresa acaba.
 
 O seu trabalho é transformar esse servidor solitário num cluster que
 sobrevive a erro humano, a queda de servidor e ao próprio crescimento.

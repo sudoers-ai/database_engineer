@@ -12,10 +12,9 @@
 # Todos os nos enxergam o volume `backups` em /backup: e o "storage de
 # backup" da empresa (dumps, backups fisicos e o arquivo de WAL).
 #
-# Este repositorio e AUTOCONTIDO: nao depende de nenhum outro repo no ar.
-# As portas foram escolhidas para nao colidir com os outros repositorios
-# da Jornada e sao publicadas so em 127.0.0.1: os bancos usam senha de
-# laboratorio e nao devem ficar visiveis para a rede.
+# As portas (5460-5464) fogem da 5432 para nao colidir com um PostgreSQL
+# instalado na maquina e sao publicadas so em 127.0.0.1: os bancos usam
+# senha de laboratorio e nao devem ficar visiveis para a rede.
 # ==========================================================================
 name: database_engineer
 

@@ -47,7 +47,7 @@ O prompt muda para `liga_sudoers=#`. Você está dentro do banco de produção.
 (6 rows)
 ```
 
-São as mesmas 6 tabelas dos outros repositórios da Jornada. A diferença é o
+São 6 tabelas simples (cadastro, catálogo e vendas). O que importa aqui é o
 volume: 18 meses de vendas.
 
 <!-- rodar: primario -->

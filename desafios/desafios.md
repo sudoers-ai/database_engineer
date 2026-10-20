@@ -1,4 +1,4 @@
-# 🧪 Desafios da Jornada — Database Engineering
+# 🧪 Desafios — Database Engineering
 
 > ⬅️ Anterior: [9. Particionamento](../etapas/09_particionamento/README.md) · [README principal](../README.md) · Etapa 10 de 10
 
